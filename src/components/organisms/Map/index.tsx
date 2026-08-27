@@ -5,9 +5,7 @@ import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css';
 import MapError from '@/components/atoms/MapError';
 
-const ENV_MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || null
-const FALLBACK_TOKEN = 'pk.eyJ1IjoicXVpbmRhcnQiLCJhIjoiY210YjdsZjZzMDJkYTJ3cjZhdnF0NDM0ZiJ9.C2sdoaNvLggtRWpB0du88w'
-const ACCESS_TOKEN = ENV_MAPBOX_TOKEN || FALLBACK_TOKEN
+const ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || null
 const MAP_STYLE = 'mapbox://styles/mapbox/streets-v12'
 
 mapboxgl.accessToken = ACCESS_TOKEN
