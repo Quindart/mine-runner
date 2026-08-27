@@ -59,8 +59,13 @@ export function RunDetail({ runId, onClose, photos = [] }) {
     onClose();
   };
 
-  // Convert run.photos (array of photoIds) to photo objects
-  const photoObjects = photos.filter((p) => run.photos.includes(p.id));
+  // Convert run.photos (array of photoIds) to photo objects with blobs
+  const photoObjects = run.photos
+    .map((photoId) => ({
+      id: photoId,
+      blob: photos[photoId],
+    }))
+    .filter((p) => p.blob);
 
   return (
     <div

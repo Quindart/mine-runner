@@ -11,7 +11,7 @@ import { compressImage } from '../utils/photoUtils';
  * Displays real-time run tracking with timer, stats, and photo capture
  */
 export function ActiveRunTab() {
-  const { currentRun, isRunning, startRun, stopRun, addPhotoToRun } = useRunStore();
+  const { currentRun, isRunning, startRun, stopRun, addPhotoToRun, storePhotoBlob } = useRunStore();
   const { elapsedSeconds, geoError } = useRunTracking();
   const [photoError, setPhotoError] = useState(null);
   const fileInputRef = useRef(null);
@@ -52,6 +52,13 @@ export function ActiveRunTab() {
 
       // Add photo to run
       addPhotoToRun(photoId, lastGpsPoint.lat, lastGpsPoint.lng, Date.now());
+
+      // Store photo blob in state (automatically persisted by Zustand)
+      try {
+        storePhotoBlob(photoId, compressedBlob);
+      } catch (storageError) {
+        setPhotoError(`Photo storage failed: ${storageError.message}`);
+      }
 
       // Reset file input
       if (fileInputRef.current) {

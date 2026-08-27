@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRunStore } from '../store/runStore';
 import { formatDate, formatDuration } from '../utils/timeUtils';
 import { RunDetail } from './RunDetail';
@@ -10,8 +10,23 @@ import { RunDetail } from './RunDetail';
  * Props: None (uses store directly)
  */
 export function PastRunsTab() {
-  const { allRuns, selectedRunId, selectRun } = useRunStore();
+  const { allRuns, selectedRunId, selectRun, getPhotoBlob } = useRunStore();
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [photos, setPhotos] = useState({});
+
+  // Load all photos from store when component mounts or allRuns changes
+  useEffect(() => {
+    const photoMap = {};
+    allRuns.forEach((run) => {
+      run.photos.forEach((photoId) => {
+        const blob = getPhotoBlob(photoId);
+        if (blob) {
+          photoMap[photoId] = blob;
+        }
+      });
+    });
+    setPhotos(photoMap);
+  }, [allRuns, getPhotoBlob]);
 
   // Sort runs by date (newest first)
   const sortedRuns = [...(allRuns || [])]
@@ -146,7 +161,7 @@ export function PastRunsTab() {
         <RunDetail
           runId={selectedRun.id}
           onClose={handleCloseDetail}
-          photos={[]}
+          photos={photos}
         />
       )}
     </div>
