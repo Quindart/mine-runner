@@ -9,14 +9,15 @@ interface NavItem {
 
 interface BottomNavProps {
   activeId: string
+  onNavigate?: (id: string) => void
 }
 
-export default function BottomNav({ activeId }: BottomNavProps) {
+export default function BottomNav({ activeId, onNavigate }: BottomNavProps) {
   const items: NavItem[] = [
-    { id: 'home', icon: <Home />, label: 'Home', onClick: () => {} },
-    { id: 'start', icon: <Play />, label: 'Start', onClick: () => {} },
-    { id: 'history', icon: <History />, label: 'History', onClick: () => {} },
-    { id: 'profile', icon: <User />, label: 'Profile', onClick: () => {} },
+    { id: 'home', icon: <Home />, label: 'Home', onClick: () => onNavigate?.('home') },
+    { id: 'start', icon: <Play />, label: 'Start', onClick: () => onNavigate?.('start') },
+    { id: 'history', icon: <History />, label: 'History', onClick: () => onNavigate?.('history') },
+    { id: 'profile', icon: <User />, label: 'Profile', onClick: () => onNavigate?.('profile') },
   ]
 
   return (
