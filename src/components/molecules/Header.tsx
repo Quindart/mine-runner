@@ -1,27 +1,21 @@
-
-import React from 'react'
+import { ChevronLeft } from 'lucide-react'
 import Button from '@/components/atoms/Button'
-import { useGlobal } from '@/context/GlobalContext'
 
-export default function Header() {
-  const { user, setUser } = useGlobal()
+interface HeaderProps {
+  title: string
+  showBack?: boolean
+  onBack?: () => void
+}
 
-  const handleChangeUser = () => {
-    setUser({ name: `Visitor ${Math.floor(Math.random() * 100)}` })
-  }
-
+export default function Header({ title, showBack = false, onBack }: HeaderProps) {
   return (
-    <header className="flex justify-between items-center px-4 py-4 bg-white shadow-sm border-b">
-      <h1 className="text-2xl font-bold text-gray-900">Hue View</h1>
-      <div className="flex items-center gap-4">
-        <span className="text-gray-700">{user?.name}</span>
-        <Button
-          onClick={handleChangeUser}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-        >
-          Change
+    <header className="bg-surface-container border-b border-outline-variant py-md px-gutter flex items-center gap-md">
+      {showBack && (
+        <Button variant="ghost" size="sm" onClick={onBack}>
+          <ChevronLeft className="w-6 h-6" />
         </Button>
-      </div>
+      )}
+      <h1 className="text-headline-lg text-on-surface">{title}</h1>
     </header>
   )
 }

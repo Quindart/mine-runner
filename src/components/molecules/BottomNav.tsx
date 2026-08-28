@@ -1,0 +1,41 @@
+import { Home, Play, History, User } from 'lucide-react'
+import { useState } from 'react'
+
+interface NavItem {
+  id: string
+  icon: React.ReactNode
+  label: string
+  onClick: () => void
+}
+
+interface BottomNavProps {
+  activeId: string
+}
+
+export default function BottomNav({ activeId }: BottomNavProps) {
+  const items: NavItem[] = [
+    { id: 'home', icon: <Home />, label: 'Home', onClick: () => {} },
+    { id: 'start', icon: <Play />, label: 'Start', onClick: () => {} },
+    { id: 'history', icon: <History />, label: 'History', onClick: () => {} },
+    { id: 'profile', icon: <User />, label: 'Profile', onClick: () => {} },
+  ]
+
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 bg-surface-container-low bg-opacity-95 backdrop-blur border-t border-outline-variant">
+      <div className="flex justify-around">
+        {items.map(item => (
+          <button
+            key={item.id}
+            onClick={item.onClick}
+            className={`flex flex-col items-center gap-xs py-md px-lg touch-target transition-colors ${
+              activeId === item.id ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'
+            }`}
+          >
+            {item.icon}
+            <span className="text-label-caps text-xs">{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  )
+}
