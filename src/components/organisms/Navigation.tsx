@@ -28,5 +28,5 @@ export default function Navigation({ activeId, onNavigate }: NavigationProps) {
     }
   }
 
-  return <BottomNav activeId={activeId} />
+  return <BottomNav activeId={activeId} onNavigate={handleNavClick} />
 }
