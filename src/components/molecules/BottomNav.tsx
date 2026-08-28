@@ -1,5 +1,4 @@
 import { Home, Play, History, User } from 'lucide-react'
-import { useState } from 'react'
 
 interface NavItem {
   id: string
@@ -32,7 +31,7 @@ export default function BottomNav({ activeId }: BottomNavProps) {
             }`}
           >
             {item.icon}
-            <span className="text-label-caps text-xs">{item.label}</span>
+            <span className="text-label-caps">{item.label}</span>
           </button>
         ))}
       </div>
