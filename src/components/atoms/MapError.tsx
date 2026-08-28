@@ -1,8 +1,8 @@
 
 function MapError({ error }: { error: string }) {
   return (
-    <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-          ❌ Error: {error}
+    <div className="p-md bg-error-container border border-error rounded-lg text-error text-body-md">
+      ❌ Error: {error}
     </div>
   )
 }

@@ -6,7 +6,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import MapError from '@/components/atoms/MapError';
 
 const ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || null
-const MAP_STYLE = 'mapbox://styles/mapbox/streets-v12'
+const MAP_STYLE = 'mapbox://styles/mapbox/dark-v11'
+const RUN_PATH_COLOR = '#deed00'
+const RUN_PATH_WIDTH = 3
 
 mapboxgl.accessToken = ACCESS_TOKEN
 
@@ -77,10 +79,32 @@ export default function Map() {
         map.fitBounds(bounds, { padding: 40, animate: false })
         map.setMaxBounds(bounds)
 
+        // Add run path layer if needed
+        if (!map.getSource('run-path')) {
+          map.addSource('run-path', {
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: [],
+            },
+          })
+
+          map.addLayer({
+            id: 'run-path-line',
+            type: 'line',
+            source: 'run-path',
+            paint: {
+              'line-color': RUN_PATH_COLOR,
+              'line-width': RUN_PATH_WIDTH,
+              'line-opacity': 0.9,
+            },
+          })
+        }
+
         // Add current location marker
         const el = document.createElement('div')
         el.className = 'marker'
-        el.style.backgroundImage = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjRkYwMDAwIiBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptMCA4Yy0xLjEgMC0yLS45LTItMnMyIC45LTIgMiAuOSAyIDIgMnoyIDZ2LTRoLTR2NGg0eiIvPjwvc3ZnPg==)'
+        el.style.backgroundImage = 'url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjZGVlZDAwIiBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptMCA4Yy0xLjEgMC0yLS45LTItMnMyIC45LTIgMiAuOSAyIDIgMnoyIDZ2LTRoLTR2NGg0eiIvPjwvc3ZnPg==)'
         el.style.backgroundSize = '100%'
         el.style.width = '32px'
         el.style.height = '32px'
@@ -139,20 +163,20 @@ export default function Map() {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-center">
-          <p className="text-lg text-gray-600">📍 Detecting your location...</p>
+          <p className="text-body-lg text-on-surface-variant">📍 Detecting your location...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-md">
       {error && (
        <MapError error={error} />
       )}
       <div
         ref={ref}
-        className="w-full h-96 rounded-lg overflow-hidden bg-slate-900 relative shadow-lg border border-slate-200"
+        className="w-full h-96 rounded-lg overflow-hidden bg-surface-container-low relative shadow-lg border border-outline-variant"
       />
     </div>
   )
