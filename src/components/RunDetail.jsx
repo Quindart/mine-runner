@@ -203,11 +203,7 @@ export function RunDetail({ runId, onClose, photos = [] }) {
               </h3>
               <Map
                 gpsTrack={run.gpsTrack}
-                photos={photoObjects.map((p) => ({
-                  id: p.id,
-                  lat: run.photos.indexOf(p.id) + 1,
-                  lng: run.photos.indexOf(p.id) + 1,
-                }))}
+                photos={[]}
               />
             </div>
           )}

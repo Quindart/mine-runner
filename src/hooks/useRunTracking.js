@@ -20,14 +20,14 @@ export function useRunTracking() {
       stopWatching();
       setElapsedSeconds(0);
     }
-  }, [isRunning, startWatching, stopWatching]);
+  }, [isRunning]);
 
   // Add GPS point to run when position updates
   useEffect(() => {
     if (isRunning && position && currentRun) {
       addGpsPoint(position.lat, position.lng, position.timestamp);
     }
-  }, [position, isRunning, currentRun, addGpsPoint]);
+  }, [position, isRunning]);
 
   // Timer: increment elapsedSeconds every 1 second when running
   useEffect(() => {

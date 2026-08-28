@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 /**
  * Map Component
- * Renders a Leaflet map with GPS route polyline and photo markers
+ * Renders a Mapbox GL map with GPS route polyline and photo markers
  *
  * Props:
  * - gpsTrack: [{lat, lng, timestamp}, ...] - Array of GPS coordinates
@@ -21,74 +23,141 @@ export function Map({ gpsTrack = [], photos = [] }) {
 
     // Initialize map if not already done
     if (!mapRef.current) {
-      mapRef.current = L.map(mapContainerRef.current).setView(
-        [gpsTrack[0].lat, gpsTrack[0].lng],
-        13
-      );
-
-      // Add OpenStreetMap tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19,
-      }).addTo(mapRef.current);
+      mapRef.current = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [gpsTrack[0].lng, gpsTrack[0].lat],
+        zoom: 13,
+      });
     }
 
     const map = mapRef.current;
 
-    // Clear existing layers (except tiles)
-    map.eachLayer((layer) => {
-      if (layer instanceof L.Polyline || layer instanceof L.Marker) {
-        map.removeLayer(layer);
+    const updateLayers = () => {
+      // Remove existing route and photo layers/sources if they exist
+      if (map.getLayer('route-line')) {
+        map.removeLayer('route-line');
       }
-    });
+      if (map.getSource('route-source')) {
+        map.removeSource('route-source');
+      }
+      if (map.getLayer('photo-points')) {
+        map.removeLayer('photo-points');
+      }
+      if (map.getLayer('photo-labels')) {
+        map.removeLayer('photo-labels');
+      }
+      if (map.getSource('photo-source')) {
+        map.removeSource('photo-source');
+      }
 
-    // Add polyline for GPS route
-    if (gpsTrack.length > 1) {
-      const latLngs = gpsTrack.map((point) => [point.lat, point.lng]);
-      L.polyline(latLngs, {
-        color: '#3388ff',
-        weight: 3,
-        opacity: 0.8,
-      }).addTo(map);
-    }
+      // Add route polyline
+      if (gpsTrack.length > 1) {
+        const coordinates = gpsTrack.map((point) => [point.lng, point.lat]);
+        map.addSource('route-source', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            geometry: {
+              type: 'LineString',
+              coordinates,
+            },
+          },
+        });
 
-    // Add markers for photos
-    photos.forEach((photo, index) => {
-      const divIcon = L.divIcon({
-        className: 'photo-marker',
-        html: `<div style="
-          background-color: #3388ff;
-          color: white;
-          border-radius: 50%;
-          width: 30px;
-          height: 30px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: bold;
-          font-size: 14px;
-          border: 2px solid white;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        ">${index + 1}</div>`,
-        iconSize: [30, 30],
-        iconAnchor: [15, 15],
-      });
+        map.addLayer({
+          id: 'route-line',
+          type: 'line',
+          source: 'route-source',
+          paint: {
+            'line-color': '#3388ff',
+            'line-width': 3,
+            'line-opacity': 0.8,
+          },
+        });
+      }
 
-      L.marker([photo.lat, photo.lng], { icon: divIcon }).addTo(map);
-    });
+      // Add photo markers
+      if (photos.length > 0) {
+        const features = photos.map((photo, index) => ({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [photo.lng, photo.lat],
+          },
+          properties: {
+            index: index + 1,
+          },
+        }));
 
-    // Fit bounds to route and markers
-    const allPoints = [
-      ...gpsTrack.map((p) => [p.lat, p.lng]),
-      ...photos.map((p) => [p.lat, p.lng]),
-    ];
+        map.addSource('photo-source', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features,
+          },
+        });
 
-    if (allPoints.length > 0) {
-      const bounds = L.latLngBounds(allPoints);
-      map.fitBounds(bounds, { padding: [50, 50] });
+        map.addLayer({
+          id: 'photo-points',
+          type: 'circle',
+          source: 'photo-source',
+          paint: {
+            'circle-radius': 15,
+            'circle-color': '#3388ff',
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#fff',
+            'circle-opacity': 0.9,
+          },
+        });
+
+        // Add labels for photo numbers
+        map.addLayer({
+          id: 'photo-labels',
+          type: 'symbol',
+          source: 'photo-source',
+          layout: {
+            'text-field': ['get', 'index'],
+            'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+            'text-size': 12,
+          },
+          paint: {
+            'text-color': '#fff',
+          },
+        });
+      }
+
+      // Fit bounds to show all points
+      const allCoordinates = [
+        ...gpsTrack.map((p) => [p.lng, p.lat]),
+        ...photos.map((p) => [p.lng, p.lat]),
+      ];
+
+      if (allCoordinates.length > 0) {
+        const bounds = allCoordinates.reduce(
+          (bounds, coord) => bounds.extend(coord),
+          new mapboxgl.LngLatBounds(allCoordinates[0], allCoordinates[0])
+        );
+        map.fitBounds(bounds, { padding: 50 });
+      }
+    };
+
+    if (map.isStyleLoaded()) {
+      updateLayers();
+    } else {
+      map.on('load', updateLayers);
     }
   }, [gpsTrack, photos]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <div

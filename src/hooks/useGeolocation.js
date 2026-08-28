@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
  * Hook that wraps the browser's Geolocation API with watchPosition
@@ -8,7 +8,7 @@ export function useGeolocation() {
   const [position, setPosition] = useState(null);
   const [error, setError] = useState(null);
   const [watching, setWatching] = useState(false);
-  const [watchId, setWatchId] = useState(null);
+  const watchIdRef = useRef(null);
 
   const startWatching = useCallback(() => {
     // Check if Geolocation API is available
@@ -51,25 +51,25 @@ export function useGeolocation() {
       }
     );
 
-    setWatchId(id);
+    watchIdRef.current = id;
   }, []);
 
   const stopWatching = useCallback(() => {
-    if (watchId !== null) {
-      navigator.geolocation.clearWatch(watchId);
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
       setWatching(false);
-      setWatchId(null);
+      watchIdRef.current = null;
     }
-  }, [watchId]);
+  }, []);
 
   // Cleanup on unmount: clear watch
   useEffect(() => {
     return () => {
-      if (watchId !== null) {
-        navigator.geolocation.clearWatch(watchId);
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
       }
     };
-  }, [watchId]);
+  }, []);
 
   return {
     position,
