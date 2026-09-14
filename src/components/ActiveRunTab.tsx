@@ -1,9 +1,15 @@
 import { useState, useRef } from 'react';
+// @ts-expect-error TS package types not available
 import { v4 as uuidv4 } from 'uuid';
+// @ts-expect-error JS module
 import { useRunStore } from '../store/runStore';
+// @ts-expect-error JS module
 import { useRunTracking } from '../hooks/useRunTracking';
+// @ts-expect-error JS module
 import { formatDuration, formatPace } from '../utils/timeUtils';
+// @ts-expect-error JS module
 import { calculateDistance, calculatePace, calculateCalories } from '../utils/gpsUtils';
+// @ts-expect-error JS module
 import { compressImage } from '../utils/photoUtils';
 
 /**
@@ -13,8 +19,8 @@ import { compressImage } from '../utils/photoUtils';
 export function ActiveRunTab() {
   const { currentRun, isRunning, startRun, stopRun, addPhotoToRun, storePhotoBlob } = useRunStore();
   const { elapsedSeconds, geoError } = useRunTracking();
-  const [photoError, setPhotoError] = useState(null);
-  const fileInputRef = useRef(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Calculate stats from current run and elapsed time
   const distance = calculateDistance(currentRun?.gpsTrack || []);
@@ -28,7 +34,7 @@ export function ActiveRunTab() {
    * - Get last GPS point
    * - Add to run
    */
-  const handlePhotoCapture = async (e) => {
+  const handlePhotoCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -56,7 +62,7 @@ export function ActiveRunTab() {
       // Store photo blob in state (automatically persisted by Zustand)
       try {
         storePhotoBlob(photoId, compressedBlob);
-      } catch (storageError) {
+      } catch (storageError: any) {
         setPhotoError(`Photo storage failed: ${storageError.message}`);
       }
 
@@ -64,7 +70,7 @@ export function ActiveRunTab() {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-    } catch (error) {
+    } catch (error: any) {
       setPhotoError(`Photo capture failed: ${error.message}`);
     }
   };
@@ -77,58 +83,61 @@ export function ActiveRunTab() {
   };
 
   return (
-    <div className="active-run-tab">
+    <div className="w-full py-lg px-gutter">
       {/* Timer Display */}
-      <div className="timer-display">
+      <div className="timer-display animate-fade-in">
         {formatDuration(elapsedSeconds)}
       </div>
 
       {/* Stats Grid */}
-      <div className="stats-grid">
+      <div className="stats-grid mb-lg">
         <div className="stat-item">
           <div className="stat-label">Distance</div>
-          <div className="stat-value">{distance.toFixed(2)} km</div>
+          <div className="stat-value">{distance.toFixed(2)}</div>
+          <div className="text-body-md text-on-surface-variant">km</div>
         </div>
         <div className="stat-item">
           <div className="stat-label">Pace</div>
           <div className="stat-value">{formatPace(pace)}</div>
+          <div className="text-body-md text-on-surface-variant">min/km</div>
         </div>
         <div className="stat-item">
           <div className="stat-label">Calories</div>
-          <div className="stat-value">~{calories} kcal</div>
+          <div className="stat-value">~{calories}</div>
+          <div className="text-body-md text-on-surface-variant">kcal</div>
         </div>
       </div>
 
       {/* Error Messages */}
       {geoError && (
-        <div className="error-message">
+        <div className="error-message animate-slide-up">
           GPS Error: {geoError}
         </div>
       )}
       {photoError && (
-        <div className="error-message">
-          {photoError}
+        <div className="error-message animate-slide-up">
+          Photo Error: {photoError}
         </div>
       )}
 
       {/* Action Buttons */}
-      <div className="action-buttons">
+      <div className="action-buttons mb-lg">
         <button
-          className="btn-start"
+          className="btn btn-primary text-label-caps"
           onClick={startRun}
           disabled={isRunning}
         >
-          Start Run
+          {isRunning ? 'Running...' : 'Start Run'}
         </button>
         <button
-          className="btn-stop"
+          className="btn btn-secondary text-label-caps"
           onClick={stopRun}
           disabled={!isRunning}
         >
           Stop Run
         </button>
         <button
-          className="btn-photo"
+          className="btn btn-primary text-label-caps"
           onClick={handlePhotoClick}
           disabled={!isRunning}
         >
@@ -147,24 +156,23 @@ export function ActiveRunTab() {
       />
 
       {/* Photo Strip */}
-      <div className="photo-strip">
-        <div className="photo-strip-header">
-          Photos ({currentRun?.photos?.length || 0})
-        </div>
-        <div className="photo-grid">
-          {currentRun?.photos && currentRun.photos.length > 0 ? (
-            currentRun.photos.map((photoId) => (
-              <div key={photoId} className="photo-thumbnail">
+      {currentRun?.photos && currentRun.photos.length > 0 && (
+        <div className="mb-lg">
+          <h3 className="text-body-md font-label-caps text-primary mb-md">
+            PHOTOS IN THIS RUN ({currentRun.photos.length})
+          </h3>
+          <div className="photo-strip">
+            {currentRun.photos.map((photoId: string) => (
+              <div
+                key={photoId}
+                className="photo-thumb bg-surface-container-high border border-outline-variant flex items-center justify-center text-2xl"
+              >
                 📷
               </div>
-            ))
-          ) : (
-            <div className="photo-empty-state">
-              No photos yet
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

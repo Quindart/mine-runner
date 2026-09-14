@@ -1,0 +1,4 @@
+import { ArrowUpRight } from 'lucide-react'
+import { formatDate, formatDuration, formatPace } from '@/utils/timeUtils'
+import RoutePreview from './RoutePreview'
+export default function RunCard({ run, onClick }: { run:any; onClick:()=>void }) { return <button className="run-card" onClick={onClick}><RoutePreview points={run.gpsTrack}/><div className="run-card-content"><div className="run-card-heading"><div><span className="eyebrow">{formatDate(run.startTime)}</span><h3>Outdoor run</h3></div><ArrowUpRight size={22} className="text-primary"/></div><dl className="run-card-metrics"><div><dt>Distance</dt><dd className="text-primary">{run.distance.toFixed(2)} <small>km</small></dd></div><div><dt>Time</dt><dd>{formatDuration(run.duration)}</dd></div><div><dt>Pace</dt><dd>{formatPace(run.pace)} <small>/km</small></dd></div><div><dt>Photos</dt><dd>{run.photos?.length||0}</dd></div></dl></div></button> }

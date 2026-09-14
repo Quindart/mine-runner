@@ -1,27 +1,20 @@
+import { ChevronLeft } from 'lucide-react'
 
-import React from 'react'
-import Button from '@/components/atoms/Button'
-import { useGlobal } from '@/context/GlobalContext'
+interface HeaderProps {
+  title: string
+  showBack?: boolean
+  onBack?: () => void
+}
 
-export default function Header() {
-  const { user, setUser } = useGlobal()
-
-  const handleChangeUser = () => {
-    setUser({ name: `Visitor ${Math.floor(Math.random() * 100)}` })
-  }
-
+export default function Header({ title, showBack = false, onBack }: HeaderProps) {
   return (
-    <header className="flex justify-between items-center px-4 py-4 bg-white shadow-sm border-b">
-      <h1 className="text-2xl font-bold text-gray-900">Hue View</h1>
-      <div className="flex items-center gap-4">
-        <span className="text-gray-700">{user?.name}</span>
-        <Button
-          onClick={handleChangeUser}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-        >
-          Change
-        </Button>
-      </div>
+    <header className="app-header">
+      {showBack && (
+        <button className="icon-button" onClick={onBack} aria-label="Go back"><ChevronLeft size={20} /></button>
+      )}
+      <div className="header-brand"><span>MINE RUNNER<span className="brand-dot">.</span></span></div>
+      <span className="header-page">{title}</span>
+      <span className="header-tagline">EVERY STEP COUNTS</span>
     </header>
   )
 }
