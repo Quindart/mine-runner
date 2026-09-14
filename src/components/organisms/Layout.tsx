@@ -9,6 +9,7 @@ interface LayoutProps {
   showNav?: boolean
   activeNav?: string
   onBack?: () => void
+  onNavigate?: (id: string) => void
 }
 
 export default function Layout({
@@ -18,16 +19,19 @@ export default function Layout({
   showNav = true,
   activeNav = 'home',
   onBack,
+  onNavigate,
 }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="app-shell">
       {showHeader && <Header title={title} showBack={!!onBack} onBack={onBack} />}
 
-      <main className="flex-1 overflow-y-auto pb-24 px-gutter pt-lg">
-        {children}
+      <main className="app-content">
+        <div className="page-content">
+          {children}
+        </div>
       </main>
 
-      {showNav && <BottomNav activeId={activeNav} />}
+      {showNav && <BottomNav activeId={activeNav} onNavigate={onNavigate} />}
     </div>
   )
 }

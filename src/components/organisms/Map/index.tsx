@@ -113,7 +113,7 @@ export default function Map() {
 
         new mapboxgl.Marker(el)
           .setLngLat([location.longitude, location.latitude])
-          .setPopup(new mapboxgl.Popup().setHTML('<p>📍 Huế, Việt Nam</p>'))
+          .setPopup(new mapboxgl.Popup().setHTML('<p>Huế, Việt Nam</p>'))
           .addTo(map)
 
         console.log('📍 Marker added at Huế:', location)
@@ -163,7 +163,7 @@ export default function Map() {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="text-center">
-          <p className="text-body-lg text-on-surface-variant">📍 Detecting your location...</p>
+          <p className="text-body-lg text-on-surface-variant">Detecting your location...</p>
         </div>
       </div>
     )

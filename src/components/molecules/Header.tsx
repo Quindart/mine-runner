@@ -1,5 +1,4 @@
 import { ChevronLeft } from 'lucide-react'
-import Button from '@/components/atoms/Button'
 
 interface HeaderProps {
   title: string
@@ -9,13 +8,13 @@ interface HeaderProps {
 
 export default function Header({ title, showBack = false, onBack }: HeaderProps) {
   return (
-    <header className="bg-surface-container border-b border-outline-variant py-md px-gutter flex items-center gap-md">
+    <header className="app-header">
       {showBack && (
-        <Button variant="ghost" size="sm" onClick={onBack}>
-          <ChevronLeft className="w-6 h-6" />
-        </Button>
+        <button className="icon-button" onClick={onBack} aria-label="Go back"><ChevronLeft size={20} /></button>
       )}
-      <h1 className="text-headline-lg text-on-surface">{title}</h1>
+      <div className="header-brand"><span>MINE RUNNER<span className="brand-dot">.</span></span></div>
+      <span className="header-page">{title}</span>
+      <span className="header-tagline">EVERY STEP COUNTS</span>
     </header>
   )
 }
