@@ -1,3 +1,3 @@
-<img width="946" height="2047" alt="6fc867c5-b803-4b28-9f46-daa08a5c4d88" src="https://github.com/user-attachments/assets/2b24b005-f023-473f-9029-f0203d3a3182" />
-<img width="946" height="2047" alt="39df62e3-70d5-4d96-b0ff-0bafd77ad391" src="https://github.com/user-attachments/assets/2aaaff5a-e4e2-4c21-9bb2-d02c8f222872" />
-<img width="946" height="2047" alt="b52a4c43-6776-4cff-901f-5c0a8e34c899" src="https://github.com/user-attachments/assets/75f108c0-4fea-42f4-9c81-3c908852e91b" />
+<img width="329" height="660" alt="Ảnh màn hình 2026-09-14 lúc 07 52 45" src="https://github.com/user-attachments/assets/8d230747-9983-4dad-93cd-927691c5f330" />
+<img width="334" height="664" alt="Ảnh màn hình 2026-09-14 lúc 07 53 50" src="https://github.com/user-attachments/assets/7dec49d6-d242-47b1-b1d0-d8e56503c7ef" />
+<img width="326" height="649" alt="Ảnh màn hình 2026-09-14 lúc 07 53 25" src="https://github.com/user-attachments/assets/5320287b-7d04-4478-8ed8-2d7b3e382ed1" />
